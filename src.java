@@ -201,6 +201,10 @@ public class src
             while ((line = reader.readLine()) != null) // Read the output of the ping command
             {
                 System.out.println(line); // Print each line of the ping output
+                if (line.toLowerCase().contains("time="))
+                {
+                    System.out.println("Latency information found! "); // Check for "time" info, and if true, print...
+                }
             }
 
             int exitCode = process.waitFor(); // Wait for connection success ('success')
@@ -245,3 +249,4 @@ class PingResult
         this.timestamp = timestamp;
     }
 }
+
