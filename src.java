@@ -39,8 +39,9 @@ public class src
             age = scanner.nextInt(); // Read the user's age from the input
             scanner.nextLine(); // Consume the newline character left by nextInt()
 
-            scanner.close();
         }
+       
+        System.out.println();
         System.out.println("You are " + age + " years old.");
 
         System.out.println(); // Print a blank line for better readability
@@ -50,9 +51,10 @@ public class src
             System.out.println("Have you used this program before? (yes/no): ");
             String input = scanner.nextLine(); // Read the user's response
             
+            System.out.println();
             if (input.equalsIgnoreCase("Yes"))
             {
-                System.out.println("You answered: Yes.");
+                System.out.println("Thank you for using this program!");
                 break;
             }
             else if (input.equalsIgnoreCase("no"))
@@ -64,19 +66,18 @@ public class src
             {
                 System.out.println("\"" + input + "\" not recognized. Please type 'yes' or 'no'.");
             }
+            System.out.println();
         }
-    
+        
         while(true)
         {
             System.out.println();
             System.out.println("Please type 'confirm' down below to proceed or 'exit' to leave the program.");
-            
-            System.out.println();
 
             String confirmation1 = scanner.nextLine(); // Read the user's confirmation response (is this correct)?
             if (confirmation1.equalsIgnoreCase("confirm")) // Check if the user confirmed
             {
-                System.out.println("You confirmed");
+                System.out.println("You confirmed.");
                 break;
             }
             else if (confirmation1.equalsIgnoreCase("exit"))
@@ -93,27 +94,51 @@ public class src
         
         System.out.println();
 
-        while(true)
+        boolean surveyConsent = false;
+
+        while(true) //   Prompt user to answer optional survey questions
         {
-            System.out.println("Do you consent to answering a few survey questions? Your privacy is important to us, and your responses are completely confidential. Your responses help improve the program and provide a better user experience. Please type 'yes' to proceed or 'no' to exit the survey.");
+            System.out.println("Do you consent to answering a few survey questions?. Your responses help improve the program and provide a better user experience. Please type 'yes' to proceed or 'no' to exit the survey.");
             String consent = scanner.nextLine(); // Read the user's consent response
-            if (consent.equalsIgnoreCase("yes")) // Check if the user consented
+            
+            if (consent.equalsIgnoreCase("yes"))    // Check if the user consented
                 {
                     System.out.println();
                     System.out.println("Thank you for consenting to the survey! We appreciate your time and feedback.");
+                    surveyConsent = true;
                     break;
                 }
             else if (consent.equalsIgnoreCase("no"))
                 {
                     System.out.println();
-                    System.out.println("You did not consent to the survey. Thank you for using the program! Goodbye.");
-                    System.exit(0);
-                    return;
+                    System.out.println("You did not consent to the survey.");
+                    System.out.println("Would you still like to proceed to the Wi-Fi Latency Analyzer program? (type 'yes' or 'no')?"); // Ask user if they would like to proceed to the program
+
+                    String consent1 = scanner.nextLine();
+                    if (consent1.equalsIgnoreCase("yes"))   //  Check if user wants to proceed to Wifi Latency Analyzer
+                        {
+                            System.out.println();
+                            System.out.println("Proceeding to program...");
+                            break;
+                        }
+                    else if (consent1.equalsIgnoreCase("no"));
+                        {
+                            System.out.println();
+                            System.out.println("You chose not to proceed. Goodbye!");
+                            System.exit(0);
+                        }
+                    
+                        {
+                            System.out.println();
+                            System.out.println("Invalid input. Please type 'yes' to proceed or 'no' to exit the program.");
+                        }
+
                 }
-                else
+            else
                 {
                     System.out.println();
                     System.out.println("Invalid input. Please type 'yes' to proceed or 'no' to exit the survey."); // Prompt the user to enter a valid response
+                    System.out.println();
                 }
         } 
 
@@ -121,37 +146,41 @@ public class src
         
         System.out.println(); // Print a blank line for better readability
         
-        System.out.println("Please answer the following survey questions with accuracy and honesty. Please type complete sentences to answer the following questions.");
+        if (surveyConsent)
+            {
 
-        System.out.println(); // Print a blank line for better readability
+                System.out.println("Please answer the following survey questions with accuracy and honesty. Please type complete sentences to answer the following questions.");
 
-        System.out.println("1. How often do you use this program?"); // Ask the first survey question
-        String answer1 = scanner.nextLine();
+                System.out.println(); // Print a blank line for better readability
 
-        System.out.println(); // Print a blank line for better readability
+                System.out.println("1. How often do you use this program?"); // Ask the first survey question
+                String answer1 = scanner.nextLine();
 
-        System.out.println("2. Have you ever experienced any issues with internet speed or latency in your day to day life? If so, please describe the issues you have faced."); // Ask the second survey question
-        String answer2 = scanner.nextLine();
+                System.out.println(); // Print a blank line for better readability
 
-        System.out.println(); // Print a blank line for better readability
+                System.out.println("2. Have you ever experienced any issues with internet speed or latency in your day to day life? If so, please describe the issues you have faced."); // Ask the second survey question
+                String answer2 = scanner.nextLine();
 
-        System.out.println("3. How important is internet speed and latency to you in your daily life? Please explain your answer.");
-        String answer3 = scanner.nextLine();
+                System.out.println(); // Print a blank line for better readability
 
-        System.out.println(); // Print a blank line for better readability
-    
-        System.out.println("4. Have you ever used any other programs or tools to analyze your internet speed or latency? If so, please describe your experience with those programs or tools.");
-        String answer4 = scanner.nextLine();
-        
-        System.out.println(); // Print a blank line for better readability
+                System.out.println("3. How important is internet speed and latency to you in your daily life? Please explain your answer.");
+                String answer3 = scanner.nextLine();
 
-        System.out.println("5. Lastly, which aspects of your life, like work, gaming, or video calling, are most affected by your internet?");
-        String answer5 = scanner.nextLine();
+                System.out.println(); // Print a blank line for better readability
+            
+                System.out.println("4. Have you ever used any other programs or tools to analyze your internet speed or latency? If so, please describe your experience with those programs or tools.");
+                String answer4 = scanner.nextLine();
+                
+                System.out.println(); // Print a blank line for better readability
 
-        System.out.println(); // Print a blank line for better readability
+                System.out.println("5. Lastly, which aspects of your life, like work, gaming, or video calling, are most affected by your internet?");
+                String answer5 = scanner.nextLine();
 
-        System.out.println("Thank you for completing the survey! Your responses have been recorded and are privately stored. We appreciate your time and feedback.");
-        
+                System.out.println(); // Print a blank line for better readability
+
+                System.out.println("Thank you for completing the survey! Your responses have been recorded and are privately stored. We appreciate your time and feedback.");
+                
+            }
         // Day 3
 
         System.out.println(); // Print a blank line for better readability
@@ -176,9 +205,9 @@ public class src
         scanner.close(); // Close the scanner to prevent resource leaks
     }
 
-    // NEW METHOD — ProcessBuilder goes HERE:
+    // Ping METHOD — ProcessBuilder goes HERE (runs operating system's ping Command here):
 
-    public static PingResult ping(String target) //  Simulate a ping operation and return a PingResult object
+    public static PingResult ping(String target) //  Run a real ping and return the result
     {
         ProcessBuilder processBuilder = new ProcessBuilder(
             "ping",
@@ -197,14 +226,29 @@ public class src
                 new InputStreamReader(process.getInputStream())
             );
 
+            double latency = 0;
+
             String line;
             while ((line = reader.readLine()) != null) // Read the output of the ping command
             {
                 System.out.println(line); // Print each line of the ping output
                 if (line.toLowerCase().contains("time="))
                 {
+                    int timeIndex = (line.toLowerCase().indexOf("time="));  //  IndexOf -search for String, then extract
                     System.out.println("Latency information found! "); // Check for "time" info, and if true, print...
+                    System.out.println("time= found at index: " + timeIndex);
+
+                    String latencyText = line.substring(timeIndex + 5); //  Extract part of latencyText
+                    System.out.println("Latency text: " + latencyText);
+
+                    int msIndex = latencyText.toLowerCase().indexOf("ms");
+                    String latencyNumber = latencyText.substring(0, msIndex);
+                    System.out.println("Latency number: " + latencyNumber);
+
+                    latency = Double.parseDouble(latencyNumber);    //  Convert latency from string --> double to store into pingResult
+                    System.out.println("Latency as a number: " + latency);
                 }
+
             }
 
             int exitCode = process.waitFor(); // Wait for connection success ('success')
@@ -219,7 +263,7 @@ public class src
                 success = false;
                 System.out.println("Connection timed out or could not be reached.");
             }
-            return new PingResult(target, 0, success, "placeholder");
+            return new PingResult(target, latency, success, "placeholder");
         }
         catch (Exception e)
         {
@@ -233,7 +277,7 @@ public class src
 //  Day 4
 //  Perform Ping Results using Constructor here:
 
-//  Ping Result Class
+//  Ping Result Class - Stores the result of a ping test
 class PingResult 
 {
     String target;
