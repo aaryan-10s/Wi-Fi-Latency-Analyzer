@@ -1,5 +1,11 @@
-import java.io.BufferedReader;     // Import the Scanner class to read input from the user
-import java.io.InputStreamReader; // Import the BufferedReader class to read output from the ping command
+/*
+    Aaryan Soni
+    Wifi-Latency Analyzer Project
+    Inspired by Gaming and unstable connections!
+ */
+
+import java.io.BufferedReader;     // Reads text from ping process
+import java.io.InputStreamReader; // Import the BufferedReader class - convert process input stream into readable text
 import java.util.Scanner; // Import the InputStreamReader class to read output from the ping command
 
 
@@ -59,7 +65,7 @@ public class src
             }
             else if (input.equalsIgnoreCase("no"))
             {
-                System.out.println("You answered: No.");
+                System.out.println("Welcome to the program!");
                 break;
             }
             else
@@ -88,7 +94,7 @@ public class src
             }
             else
             {
-                System.out.println("Failure to recognize user input");
+                System.out.println("Failure to recognize user input.");
             }
         }
         
@@ -121,10 +127,11 @@ public class src
                             System.out.println("Proceeding to program...");
                             break;
                         }
-                    else if (consent1.equalsIgnoreCase("no"));
+                    else if (consent1.equalsIgnoreCase("no"))
                         {
                             System.out.println();
                             System.out.println("You chose not to proceed. Goodbye!");
+                            scanner.close();
                             System.exit(0);
                         }
                     
@@ -205,7 +212,9 @@ public class src
         scanner.close(); // Close the scanner to prevent resource leaks
     }
 
-    // Ping METHOD — ProcessBuilder goes HERE (runs operating system's ping Command here):
+    //  Ping METHOD — ProcessBuilder goes HERE (runs operating system's ping Command here):
+    //  Runs a real ping, determines success, extracts latency,
+    //  and returns results in a PingResult object
 
     public static PingResult ping(String target) //  Run a real ping and return the result
     {
@@ -242,10 +251,12 @@ public class src
                     System.out.println("Latency text: " + latencyText);
 
                     int msIndex = latencyText.toLowerCase().indexOf("ms");
-                    String latencyNumber = latencyText.substring(0, msIndex);
-                    System.out.println("Latency number: " + latencyNumber);
-
-                    latency = Double.parseDouble(latencyNumber);    //  Convert latency from string --> double to store into pingResult
+                    if (msIndex != -1)
+                        {
+                            String latencyNumber = latencyText.substring(0, msIndex);
+                            System.out.println("Latency number: " + latencyNumber);
+                            latency = Double.parseDouble(latencyNumber);    //  Convert latency from string --> double to store into pingResult
+                        }
                     System.out.println("Latency as a number: " + latency);
                 }
 
@@ -275,9 +286,8 @@ public class src
 }
 
 //  Day 4
-//  Perform Ping Results using Constructor here:
 
-//  Ping Result Class - Stores the result of a ping test
+//  Ping Result Class - Stores the result of a network test
 class PingResult 
 {
     String target;
@@ -293,4 +303,3 @@ class PingResult
         this.timestamp = timestamp;
     }
 }
-
