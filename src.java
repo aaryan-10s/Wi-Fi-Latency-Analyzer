@@ -8,8 +8,11 @@ import java.io.BufferedReader;     // Reads text from ping process
 import java.io.InputStreamReader; // Import the BufferedReader class - convert process input stream into readable text
 import java.time.LocalDateTime; // Import the InputStreamReader class to read output from the ping command
 import java.time.format.DateTimeFormatter; //  Import Time Class to record WHEN a Ping was ran
-import java.util.Scanner; //  Import Formatter Class to actually display a comprehensible output of the time to the user
+import java.util.ArrayList;   //  Import ArrayList object to store multiple PingResults/run multiple tests at once
+import java.util.Scanner;   //  Import Scanner object
+
 public class src 
+
 {
     public static void main(String[] args) // Main method - entry point of the program
     {
@@ -220,17 +223,77 @@ public class src
         System.out.println("Confirming: " + websiteInput); // Print the user's website/IP address input;
         
         System.out.println(); // Print a blank line for better readability
+        
+        System.out.println("How many ping tests would you like to run?");
+        
+        int numberOfTests;  //  How many tests being performed? *(whole #)
+        
+        while(!input.hasNextInt())
+        {
+            System.out.println("Invalid input. Please enter a whole number.");
 
-        System.out.println("Thank you for providing your public test target. We will now proceed to analyze the latency to " + websiteInput + ". Please wait while we perform the analysis...");
+            input.nextLine();
+        }
+        numberOfTests = input.nextInt();
+        input.nextLine();
+ 
+        while(numberOfTests <= 0)   //  Number of Pings being ran cannot be <0
+        {
+            System.out.println();
+            System.out.println("Number of tests must be greater than 0.");
+            System.out.println("Please enter the number of tests again: ");
+            while (!input.hasNextInt())
+            {
+                System.out.println("Invalid input. Please enter a whole number.");
+                input.nextLine();
+            }
+            numberOfTests = input.nextInt();
+            input.nextLine();
+        }
+
+        //  Create an arrayList to display multiple PingResults
+        ArrayList<PingResult> results = new ArrayList<>();
+        
+        System.out.println();
+
+        System.out.println("Beginning " + numberOfTests + " ping tests to " + websiteInput + "...");
+        for (int i = 0; i < numberOfTests; i++)
+        {
+            System.out.println();
+            System.out.println("===== TEST " + (i+1) + " OF " + numberOfTests + " =====");
+            PingResult result = ping(websiteInput);
+
+            //  Store this pingResult into Array
+            results.add(result);
+            System.out.println("Result successfully stored.");
+            System.out.println("Results successfully stored: " + results.size());
+        }
+        
+        // ------- DISPLAY ALL STORED RESULTS -------
+        System.out.println();
+        System.out.println("===========================");
+        System.out.println("     ALL TEST RESULTS");
+        System.out.println("===========================");
+
+        // ------- DISPLAY ALL PING RESULTS ------- 
+        for (PingResult result : results)
+        {
+            System.out.println();
+            
+            System.out.println("Target: " + result.target); 
+            System.out.println("Latency: " + result.latency + " ms");
+            System.out.println("Success: " + result.success);
+            System.out.println("Timestamp: " + result.timestamp);
+
+            System.out.println("-----------------------");
+        }
+        
+        System.out.println();
+       
+        System.out.println("Total results stored: " + results.size());
+        System.out.println("Analyzed Ping for " + numberOfTests + " tests" + " at target: " + websiteInput);
 
         System.out.println(); // Print a blank line for better readability
-
-        PingResult result = ping(websiteInput);
-
-        System.out.println("Target: " + result.target);
-        System.out.println("Latency: " + result.latency + " ms");
-        System.out.println("Success: " + result.success);
-        System.out.println("Timestamp: " + result.timestamp);
 
         input.close(); // Close the scanner to prevent resource leaks
     }
