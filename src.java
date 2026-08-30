@@ -260,12 +260,11 @@ public class src
         for (int i = 0; i < numberOfTests; i++)
         {
             System.out.println();
-            System.out.println("===== TEST " + (i+1) + " OF " + numberOfTests + " =====");
+            System.out.println("===== TEST " + (i + 1) + " OF " + numberOfTests + " =====");
             PingResult result = ping(websiteInput);
 
             //  Store this pingResult into Array
             results.add(result);
-            System.out.println("Result successfully stored.");
             System.out.println("Results successfully stored: " + results.size());
         }
         
@@ -284,7 +283,7 @@ public class src
             System.out.println("Latency: " + result.latency + " ms");
             System.out.println("Success: " + result.success);
             System.out.println("Timestamp: " + result.timestamp);
-
+            
             System.out.println("-----------------------");
         }
         
@@ -292,8 +291,72 @@ public class src
        
         System.out.println("Total results stored: " + results.size());
         System.out.println("Analyzed Ping for " + numberOfTests + " tests" + " at target: " + websiteInput);
-
         System.out.println(); // Print a blank line for better readability
+        
+        //  ===================================================
+        //  ANALYZE THE STORED RESULTS
+        //  ===================================================
+
+        //  STEP 1: Count # of successful and failed tests
+        
+        int successfulTests = 0;
+        int failedTests = 0;
+
+        for (PingResult result: results)
+        {
+            if (result.success)
+            {
+                successfulTests++;
+            }
+            else
+            {
+                failedTests++;
+            }
+        }
+        System.out.println("Successful Tests: " + successfulTests);
+        System.out.println("Failed tests: " + failedTests);
+        
+        //  STEP 2: Calculate Packet Loss (%)
+
+        double packetLoss = ((double) failedTests / results.size()) * 100;
+        System.out.println("Packet Loss: " + packetLoss + "%");
+
+        //  STEP 3: Calculate Average Latency
+
+        double totalLatency = 0;
+        int successfulLatencyTests = 0;
+
+        for (PingResult result: results)
+        {
+            if (result.success)
+            {
+                totalLatency += result.latency;
+                successfulLatencyTests++;
+            }
+        }
+        
+        double averageLatency = 0;
+
+        if (successfulLatencyTests > 0)
+        {
+            averageLatency = (totalLatency / successfulLatencyTests);
+        }
+        System.out.println("Average Latency: " + averageLatency + "ms");
+
+        //  ===================================================
+        //  - FINAL SUMMARY / DISPLAYING ANALYSIS OF TESTS -
+        //  ===================================================
+
+        System.out.println();
+       
+        System.out.println("================================");
+        System.out.println("        PING TEST SUMMARY");
+        System.out.println("================================");
+
+        System.out.println("Successful Tests: " + successfulTests);
+        System.out.println("Failed Tests: " + failedTests);
+        System.out.println("Packet Loss:"  + packetLoss + "%");
+        System.out.println("Average Latency: " + averageLatency + "ms");
 
         input.close(); // Close the scanner to prevent resource leaks
     }
@@ -362,7 +425,7 @@ public class src
             }
             LocalDateTime now = LocalDateTime.now();   //  Extract current time
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy  hh:mm a");   //  Format time into something readable for user
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy  hh:mm:ss a");   //  Format time into something readable for user
             String timestamp = now.format(formatter);   //  process current time into formatter
             return new PingResult(target, latency, success, timestamp);   //  Display target, latency, success/failure, and time of Ping ran
         }
@@ -372,7 +435,7 @@ public class src
             return new PingResult(target, 0, false, "placeholder"); // Return a PingResult object with the actual success state
 
         }
-       
+    
     }
 }
 
@@ -386,7 +449,13 @@ class PingResult
     boolean success;
     String timestamp;
 
-    public PingResult(String target, double latency, boolean success, String timestamp)
+    public PingResult(
+        String target, 
+        double latency, 
+        boolean success, 
+        String timestamp
+    )
+    
     {
         this.target = target;
         this.latency = latency;
