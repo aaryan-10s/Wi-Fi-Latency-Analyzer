@@ -319,8 +319,7 @@ public class src
         //  STEP 2: Calculate Packet Loss (%)
 
         double packetLoss = ((double) failedTests / results.size()) * 100;
-        System.out.println("Packet Loss: " + packetLoss + "%");
-
+        
         //  STEP 3: Calculate Average Latency
 
         double totalLatency = 0;
@@ -343,21 +342,24 @@ public class src
         }
         System.out.println("Average Latency: " + averageLatency + "ms");
 
+        System.out.println();
+
         //  ===================================================
         //  - FINAL SUMMARY / DISPLAYING ANALYSIS OF TESTS -
         //  ===================================================
-
-        System.out.println();
-       
+        
         System.out.println("================================");
         System.out.println("        PING TEST SUMMARY");
         System.out.println("================================");
 
+        System.out.println("Target: " + websiteInput);
+        System.out.println("Tests performed: " + results.size());
         System.out.println("Successful Tests: " + successfulTests);
         System.out.println("Failed Tests: " + failedTests);
-        System.out.println("Packet Loss:"  + packetLoss + "%");
-        System.out.println("Average Latency: " + averageLatency + "ms");
+        System.out.printf("Packet Loss: %.2f%%%n", packetLoss);     //  Format/round packetLoss to 2 decimal places
+        System.out.printf("Average Latency: %.2f ms%n", averageLatency);    //  Round averageLatency to 2 decimal places
 
+        System.out.println("================================");
         input.close(); // Close the scanner to prevent resource leaks
     }
 
