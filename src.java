@@ -7,9 +7,9 @@
 import java.io.BufferedReader;     // Reads text from ping process
 import java.io.InputStreamReader; // Import the BufferedReader class - convert process input stream into readable text
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter; // Import the InputStreamReader class to read output from the ping command
-import java.util.ArrayList; //  Import Time Class to record WHEN a Ping was ran
-import java.util.Scanner;   //  Import ArrayList object to store multiple PingResults/run multiple tests at once
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList; // Import the InputStreamReader class to read output from the ping command
+import java.util.Scanner; //  Import Time Class to record WHEN a Ping was ran
 
 public class src 
 
@@ -218,7 +218,7 @@ public class src
 
         System.out.println(); // Print a blank line for better readability
 
-        System.out.println("Enter a hostname or IP address to test (eg., cloudflare.com, 1.1.1.1, google.com, 8.8.8.8 etc.");
+        System.out.println("Enter a hostname or IP address to test (eg., cloudflare.com, 1.1.1.1, google.com, 8.8.8.8 etc.)");
         String websiteInput = input.nextLine(); // Read the user's website/IP address input
         System.out.println("Confirming: " + websiteInput); // Print the user's website/IP address input;
         
@@ -262,6 +262,7 @@ public class src
             System.out.println();
             System.out.println("===== TEST " + (i + 1) + " OF " + numberOfTests + " =====");
             PingResult result = ping(websiteInput);
+            System.out.println();       //  Spacing
 
             //  Store this pingResult into Array
             results.add(result);
@@ -274,6 +275,7 @@ public class src
         System.out.println("     ALL TEST RESULTS");
         System.out.println("===========================");
 
+        int successfulLatencyTests = 0;
         // ------- DISPLAY ALL PING RESULTS ------- 
     
         int i = 0;
@@ -284,16 +286,22 @@ public class src
             System.out.println();
 
             System.out.println("Target: " + result.target);
-            System.out.println("Latency: " + result.latency + " ms");                
+            
+            if (result.success)         //  If ping connection = success
+            {
+                System.out.println("Latency: " + result.latency + " ms");
+            }
+            else        //  If ping connection = failure
+            {
+                System.out.println("Latency: N/A");        //  **Very important to display N/A and NOT 0 because 0 says 
+            }                                                 //  we got a measurement, but failed connection == N/A (no measurement)
             System.out.println("Success: " + result.success);
             System.out.println("Timestamp: " + result.timestamp);
            
-            System.out.println();
             System.out.println("-----------------------");
 
             i++;
         }
-        
         
         System.out.println();
        
@@ -308,7 +316,6 @@ public class src
         //  STEP 1: Count # of successful and failed tests
         
         double totalLatency = 0;
-        int successfulLatencyTests = 0;
 
         int successfulTests = 0;
         int failedTests = 0;
@@ -363,7 +370,6 @@ public class src
         {
             averageLatency = (totalLatency / successfulLatencyTests);
         }
-        System.out.println("Average Latency: " + averageLatency + "ms");
 
         System.out.println();
 
@@ -374,29 +380,28 @@ public class src
         System.out.println("================================");
         System.out.println("        PING TEST SUMMARY");
         System.out.println("================================");
+       
+        System.out.println();
 
         System.out.println("Target: " + websiteInput);
         System.out.println("Tests performed: " + results.size());
-        System.out.println();
-        
         System.out.println("Successful Tests: " + successfulTests);
         System.out.println("Failed Tests: " + failedTests);
-        System.out.println();
-        
         System.out.printf("Packet Loss: %.2f%%%n", packetLoss);     //  Format/round packetLoss to 2 decimal places
-        System.out.printf("Average Latency: %.2f ms%n", averageLatency);    //  Round averageLatency to 2 decimal places
-        
-        if ((successfulLatencyTests > 0))       //  Basically means: if we have any tests that ran, then only can we display these
+        if ((successfulLatencyTests > 0))       //  Basically means: if we have tests that ran, then only can we display these
         {
+            System.out.printf("Average Latency: %.2f ms%n", averageLatency);            //  Display avg Latency
             System.out.printf("Mininum Latency: %.2f ms%n", minLatency);    //  Display min Latency
             System.out.printf("Maximum Latency: %.2f ms%n", maxLatency);    //  Display max Latency
         }
         else        //  Display N/A to indicate failed tests
         {
+            System.out.println("Average Latency: N/A");
             System.out.println("Minimum Latency: N/A");
             System.out.println("Maximum Latency: N/A");
         }
         System.out.println("================================");
+        
         input.close(); // Close the scanner to prevent resource leaks
     }
 
