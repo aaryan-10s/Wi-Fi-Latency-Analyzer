@@ -4,12 +4,12 @@
     Inspired by Gaming and unstable connections!
  */
 
-import java.io.BufferedReader;     // Reads text from ping process
-import java.io.InputStreamReader; // Import the BufferedReader class - convert process input stream into readable text
-import java.time.LocalDateTime;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;     // Reads text from ping process
+import java.time.LocalDateTime; // Import the BufferedReader class - convert process input stream into readable text
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList; // Import the InputStreamReader class to read output from the ping command
-import java.util.Scanner; //  Import Time Class to record WHEN a Ping was ran
+import java.util.ArrayList;
+import java.util.Scanner; // Import the InputStreamReader class to read output from the ping command
 
 public class src 
 
@@ -276,9 +276,147 @@ public class src
         System.out.println("===========================");
 
         int successfulLatencyTests = 0;
+        
         // ------- DISPLAY ALL PING RESULTS ------- 
+        displayResults(results, numberOfTests);
+
+        System.out.println();
+       
+        System.out.println("Total results stored: " + results.size());
+        System.out.println("Analyzed Ping for " + numberOfTests + " tests" + " at target: " + websiteInput);
+        System.out.println(); // Print a blank line for better readability
+        
+        //  ===================================================
+        //  ANALYZE THE STORED RESULTS
+        //  ===================================================
+
+         // ------- ANALYZE PING RESULTS ------- 
     
+        //  STEP 1: Count # of successful and failed tests
+        
+        double totalLatency = 0;
+
+        int successfulTests = 0;
+        int failedTests = 0;
+
+        double minLatency = Double.MAX_VALUE;
+        double maxLatency = 0;
+
+        double totalJitter = 0;
+        double previousLatency = 0;
+        int jitterComparisons = 0;
+        boolean haspreviousLatency = false;
+
+        for (PingResult result: results)
+        {
+            if (result.success)     //  Use if/else to meet conditions and display max/min values on terminal
+            {
+                successfulTests++;      //  Add succcessfulTests if program makes a successful connection
+                
+                totalLatency += result.latency;
+                successfulLatencyTests++;
+                
+                if (result.latency < minLatency)
+                {
+                    minLatency = result.latency;
+                }
+                if (result.latency > maxLatency)
+                {
+                    maxLatency = result.latency;
+                }
+                if (!haspreviousLatency)        //  If no previous latency (1st ping result)
+                {
+                previousLatency = result.latency;   //  Convert first ping result into previous latency
+                haspreviousLatency = true;          //  Now for every ping result after, there will be a previous latency
+                }
+                else
+                {
+                double diff = Math.abs(result.latency - previousLatency);
+                
+                totalJitter += diff;
+                jitterComparisons++;
+                previousLatency = result.latency;
+                }
+            }
+            
+            else    //      If conditions not met (min or max), display failure
+            {
+                failedTests++;
+            }
+        }
+        System.out.println("Successful Tests: " + successfulTests);
+        System.out.println("Failed tests: " + failedTests);
+        
+        //  STEP 2: Calculate Packet Loss (%)
+
+        double packetLoss = ((double) failedTests / results.size()) * 100;
+        
+        //  STEP 3: Calculate Average Latency
+        
+        double averageLatency = 0;
+
+        if (successfulLatencyTests > 0)
+        {
+            averageLatency = (totalLatency / successfulLatencyTests);
+        }
+        //  STEP 4: Calculate Jitter
+        
+        double jitter = 0;
+        if (jitterComparisons > 0)      //  Do we have atleast 2 ping results aka 1 comparison?
+        {
+            jitter = totalJitter / jitterComparisons;       //  jitter (aka average jitter)
+        }
+        
+        System.out.println("Packet Loss: " + packetLoss + "%");
+        if (jitterComparisons > 0)      //  If we have atleast 2 ping results aka 1 comparison, then display Jitter
+            System.out.printf("Jitter: %.2f ms%n", jitter);
+        else                            //  If 1 or 0 ping results, aka 0 comparisons, then Jitter = N/A
+            System.out.println("Jitter: N/A");
+        System.out.println("Average Latency: " + averageLatency + " ms");
+        System.out.println("Minimum Latency: " + minLatency + " ms");
+        System.out.println("Maximum Latency: " + maxLatency + " ms");
+        
+        System.out.println();
+
+        //  ===================================================
+        //  - FINAL SUMMARY / DISPLAYING ANALYSIS OF TESTS -
+        //  ===================================================
+
+        System.out.println("================================");
+        System.out.println("        PING TEST SUMMARY");
+        System.out.println("================================");
+       
+        System.out.println();
+
+        System.out.println("Target: " + websiteInput);
+        System.out.println("Tests performed: " + results.size());
+        System.out.println("Successful Tests: " + successfulTests);
+        System.out.println("Failed Tests: " + failedTests);
+        System.out.printf("Packet Loss: %.2f%%%n", packetLoss);     //  Format/round packetLoss to 2 decimal places
+        if (jitterComparisons > 0)
+            System.out.printf("Jitter: %.2f ms%n", jitter);
+        else
+            System.out.println("Jitter: N/A");
+        if ((successfulLatencyTests > 0))       //  Basically means: if we have tests that ran, then only can we display these
+        {
+            System.out.printf("Average Latency: %.2f ms%n", averageLatency);            //  Display avg Latency
+            System.out.printf("Mininum Latency: %.2f ms%n", minLatency);    //  Display min Latency
+            System.out.printf("Maximum Latency: %.2f ms%n", maxLatency);    //  Display max Latency
+        }
+        else        //  Display N/A to indicate failed tests
+        {
+            System.out.println("Average Latency: N/A");
+            System.out.println("Minimum Latency: N/A");
+            System.out.println("Maximum Latency: N/A");
+        }
+        System.out.println("================================");
+    }
+
+    // ------- DISPLAY ALL PING RESULTS ------- 
+    private static void displayResults(ArrayList<PingResult> results, int numberOfTests)
+    {
         int i = 0;
+        
         for (PingResult result : results)
         {
             System.out.println();
@@ -302,114 +440,13 @@ public class src
 
             i++;
         }
-        
-        System.out.println();
-       
-        System.out.println("Total results stored: " + results.size());
-        System.out.println("Analyzed Ping for " + numberOfTests + " tests" + " at target: " + websiteInput);
-        System.out.println(); // Print a blank line for better readability
-        
-        //  ===================================================
-        //  ANALYZE THE STORED RESULTS
-        //  ===================================================
-
-        //  STEP 1: Count # of successful and failed tests
-        
-        double totalLatency = 0;
-
-        int successfulTests = 0;
-        int failedTests = 0;
-
-        double minLatency = Double.MAX_VALUE;
-        double maxLatency = 0;
-
-        for (PingResult result: results)
-        {
-            if (result.success)     //  Use if/else to meet conditions and display max/min values on terminal
-            {
-                successfulTests++;      //  Add succcessfulTests if program makes a successful connection
-                
-                totalLatency += result.latency;
-                successfulLatencyTests++;
-                
-                if (result.latency < minLatency)
-                {
-                    minLatency = result.latency;
-                }
-                if (result.latency > maxLatency)
-                {
-                    maxLatency = result.latency;
-                }
-            }
-            else    //      If conditions not met (min or max), display failure
-            {
-                failedTests++;
-            }
-        }
-        System.out.println("Successful Tests: " + successfulTests);
-        System.out.println("Failed tests: " + failedTests);
-        
-        //  STEP 2: Calculate Packet Loss (%)
-
-        double packetLoss = ((double) failedTests / results.size()) * 100;
-        
-        //  STEP 3: Calculate Average Latency
-
-        for (PingResult result: results)
-        {
-            if (result.success)
-            {
-                totalLatency += result.latency;
-                successfulLatencyTests++;
-            }
-        }
-        
-        double averageLatency = 0;
-
-        if (successfulLatencyTests > 0)
-        {
-            averageLatency = (totalLatency / successfulLatencyTests);
-        }
-
-        System.out.println();
-
-        //  ===================================================
-        //  - FINAL SUMMARY / DISPLAYING ANALYSIS OF TESTS -
-        //  ===================================================
-
-        System.out.println("================================");
-        System.out.println("        PING TEST SUMMARY");
-        System.out.println("================================");
-       
-        System.out.println();
-
-        System.out.println("Target: " + websiteInput);
-        System.out.println("Tests performed: " + results.size());
-        System.out.println("Successful Tests: " + successfulTests);
-        System.out.println("Failed Tests: " + failedTests);
-        System.out.printf("Packet Loss: %.2f%%%n", packetLoss);     //  Format/round packetLoss to 2 decimal places
-        if ((successfulLatencyTests > 0))       //  Basically means: if we have tests that ran, then only can we display these
-        {
-            System.out.printf("Average Latency: %.2f ms%n", averageLatency);            //  Display avg Latency
-            System.out.printf("Mininum Latency: %.2f ms%n", minLatency);    //  Display min Latency
-            System.out.printf("Maximum Latency: %.2f ms%n", maxLatency);    //  Display max Latency
-        }
-        else        //  Display N/A to indicate failed tests
-        {
-            System.out.println("Average Latency: N/A");
-            System.out.println("Minimum Latency: N/A");
-            System.out.println("Maximum Latency: N/A");
-        }
-        System.out.println("================================");
-        
-        input.close(); // Close the scanner to prevent resource leaks
     }
 
     //  Ping METHOD — ProcessBuilder goes HERE (runs operating system's ping Command here):
     //  Runs a real ping, determines success, extracts latency,
     //  and returns results in a PingResult object
 
-    public static PingResult ping(String target) //  Run a real ping and return the result
+    private static PingResult ping(String target) //  Run a real ping and return the result
     {
         ProcessBuilder processBuilder = new ProcessBuilder(
             "ping",
@@ -507,3 +544,6 @@ class PingResult
         this.timestamp = timestamp;
     }
 }
+//  End of PingResult class
+//  End of source file
+//  Wi-Fi Latency Analyzer
