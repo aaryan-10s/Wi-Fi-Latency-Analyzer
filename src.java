@@ -7,12 +7,11 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;     // Reads text from ping process
 import java.time.LocalDateTime; // Import the BufferedReader class - convert process input stream into readable text
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter;  //  Format date/time of running a ping test
 import java.util.ArrayList;
 import java.util.Scanner; // Import the InputStreamReader class to read output from the ping command
 
 public class src 
-
 {
     public static void main(String[] args) // Main method - entry point of the program
     {
@@ -20,15 +19,26 @@ public class src
         Scanner input = new Scanner(System.in); // Create a scanner object to read input from the user
 
         System.out.println();
-        
+
         System.out.print("Please enter your name: ");
-        String name = input.nextLine(); // Read the user's name from the input
-        
+        String name = input.nextLine().trim(); // Read the user's name from the input
+        while(name.isEmpty())       //  Entering just space means input is empty, so prompts user to try again
+        {
+            System.out.println("No name detected. Please enter a name.");
+            name = input.nextLine().trim();
+        }
         System.out.println("Hello, " + name + "!");
+        switch(name.toLowerCase())
+        {
+            case "aaryan soni":
+            case "aaryan":
+            case "aaryan s":
+                System.out.println("You share the same name as the creator!");
+        }
 
         System.out.println(); // Print a blank line for better readability
 
-        System.out.println("Please enter your age (as a number): ");    
+        System.out.println("Please enter your age (as a whole number): \nIf you would not like to enter your age, please enter '0'.");
         while (!input.hasNextInt()) // Check if the input is not an integer
         {
             System.out.println("Invalid input. Please enter a number for your age: "); // Prompt the user to enter a valid number
@@ -47,11 +57,13 @@ public class src
 
             age = input.nextInt(); // Read the user's age from the input
             input.nextLine(); // Consume the newline character left by nextInt()
-
         }
        
         System.out.println();
-        System.out.println("You are " + age + " years old.");
+        if(age == 0)
+            System.out.println("You skipped. Proceeding...");
+        else
+            System.out.println("You are " + age + " years old.");
 
         System.out.println(); // Print a blank line for better readability
 
@@ -124,7 +136,6 @@ public class src
             }
         }
         
-        
         System.out.println();
         boolean surveyConsent = false;
 
@@ -174,8 +185,6 @@ public class src
                 System.out.println();
             }
         } 
-
-        // Day 2
         
         System.out.println(); // Print a blank line for better readability
         
@@ -519,8 +528,6 @@ public class src
     
     }
 }
-
-//  Day 4
 
 //  Ping Result Class - Stores the result of a network test
 class PingResult 
