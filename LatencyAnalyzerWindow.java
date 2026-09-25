@@ -8,7 +8,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;     //  Controls how components are arranged
 import java.awt.Font;
 import java.awt.GridLayout;
-import javax.swing.*;       //  Gives access to Windows Swing components  
+import java.util.ArrayList;     //  Utilize array List tools
+import javax.swing.*;       //  Gives access to Windows Swing components
 
 public class LatencyAnalyzerWindow
 {
@@ -78,17 +79,168 @@ public class LatencyAnalyzerWindow
             JLabel statusLabel = new JLabel("Status: Ready to test");       //  Displays status
             statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             
-            //  Runs everytime user clicks button 'Start Test':
+            //  Placeholder values (eg. -- ms) will be replaced by real ping data later after connecting core program to desktop APP
+            JLabel averageLatencyLabel = new JLabel("Average Latency: -- ms");
+            JLabel minLatencyLabel = new JLabel("Minimum Latency: -- ms ");
+            JLabel maxLatencyLabel = new JLabel("Maximum Latency: -- ms");
+            JLabel packetLossLabel = new JLabel("Packet Loss: -- %");
+            JLabel jitterLabel = new JLabel("Jitter: -- ms");
+
+            //  Runs everytime user clicks button 'Start Test' (IMPORTANT as it connects src.java functionality with the UI)
             startButton.addActionListener(event -> 
             {
                 String SelectedTarget = (String) targetDropBox.getSelectedItem();       //  Reads item selected from dropdown menu
                 
-                PingResult result = src.ping(SelectedTarget);       //  Calls ping method from src class (src.java) -- acts as bridge to actually connect ping function with users' selected target
-                if(result.success)
-                    statusLabel.setText(String.format("Ping successful: %.2f ms", result.latency));
-                else
-                    statusLabel.setText("Ping failed.");
+                //  Read # of tests and delay from text fields
+                String testCountText = testCountField.getText();
+                String delayText = delayField.getText();
+
+                int numberOfTests;
+                double delaySeconds;
+
+                //  Validate # of tests
+                try
+                {
+                    numberOfTests =  Integer.parseInt(testCountText);
+
+                    if (numberOfTests <= 0)
+                    {
+                        statusLabel.setText("Number of tests must be greater than 0.");
+                        return;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    statusLabel.setText("Please enter a valid number of tests.");
+                    return;
+                }
+
+                //  Validate delay
+                try
+                {
+                    delaySeconds = Double.parseDouble(delayText);
+
+                    if (delaySeconds < 0)
+                    {
+                        statusLabel.setText("Delay cannot be negative.");
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    statusLabel.setText("Please enter a valid delay.");
+                    return;
+                }
+
+                //  Store all of the Ping Results
+                ArrayList<PingResult> results = new ArrayList<>();
+
+                statusLabel.setText("Testing...");
+
+                //  Run requested # of tests
+                for (int i = 0; i < numberOfTests; i++)
+                {
+                    PingResult result = src.ping(SelectedTarget);
+                    results.add(result);
+
+                    //  Delay between # of tests
+                    if (i < numberOfTests - 1)
+                    {
+                        try
+                        {
+                            Thread.sleep((long)(delaySeconds * 1000));
+                        }
+                        catch (InterruptedException e)
+                        {
+                            Thread.currentThread().interrupt();
+                            statusLabel.setText("Test Interrupted.");
+                            return;
+                        }
+                    }
+                }
+
+                //  ----------  ANALYZE RESULTS (Jitter, packetLoss, etc.)  ---------- 
+                int successfulTests = 0;
+                int failedTests = 0;
+                int successfulLatencyTests = 0;
                 
+                double totalLatency = 0;
+                double minLatency = Double.MAX_VALUE;       //  Max value a double can store
+                double maxLatency = 0;
+
+                double totalJitter = 0;
+                double previousLatency = 0;
+                int jitterComparisons = 0;
+                boolean hasPreviousLatency = false;
+
+                for (PingResult result : results)
+                {
+                    if (result.success)
+                    {
+                        successfulTests++;
+
+                        totalLatency += result.latency;
+                        successfulLatencyTests++;
+
+                        //  Max/min latencies
+                        if (result.latency < minLatency)
+                            minLatency = result.latency;
+                        if (result.latency > maxLatency)
+                            maxLatency = result.latency;
+
+                        //  Jitter
+                        if (!hasPreviousLatency)
+                        {
+                            previousLatency = result.latency;
+                            hasPreviousLatency = true;
+                        }
+                        else
+                        {
+                            double diff = Math.abs(result.latency - previousLatency);
+                            totalJitter += diff;
+                            jitterComparisons++;
+
+                            previousLatency = result.latency;
+                        }
+                    }
+                    else
+                    {
+                        failedTests++;
+                    }
+                }
+
+                //  ----------  CALCULATE FINAL STATISTICS  ----------
+                double averageLatency = 0;
+                double packetLoss = ((double) failedTests / results.size()) * 100;
+                double jitter = 0;
+
+                if (successfulLatencyTests > 0)     //  Have atleast 1 successful ping result?
+                    averageLatency = totalLatency / successfulLatencyTests;     //  Only successful ping tests account for average latency
+                if (jitterComparisons > 0)
+                    jitter = totalJitter / jitterComparisons;
+
+                //  ----------  UPDATE GUI (GRAPHICAL USER INTERFACE)  ----------
+
+                statusLabel.setText("Testing Complete: " + successfulTests + "/" + numberOfTests + " tests successful.");       //  Display # of successful tests
+
+                if (successfulLatencyTests > 0)     //  If atleast 1 successful ping test, then display:
+                {
+                    averageLatencyLabel.setText(String.format("Average Latency: %.2f ms", averageLatency));
+                    minLatencyLabel.setText(String.format("Minimum Latency: %.2f ms", minLatency));
+                    maxLatencyLabel.setText(String.format("Maximum Latency: %.2f ms", maxLatency));
+                }
+                else        //  If 0 Successful ping tests, then display N/A:
+                {
+                    averageLatencyLabel.setText("Average Latency: N/A");
+                    minLatencyLabel.setText("Minimum Latency: N/A");
+                    maxLatencyLabel.setText("Maximum Latency: N/A");
+                }
+
+                packetLossLabel.setText(String.format("Packet Loss: %.2f%%", packetLoss));      //  Display Packet Loss (%)
+
+                if (jitterComparisons > 0)      //  Atleast 1 jitter comparison aka 2 ping results?
+                    jitterLabel.setText(String.format("Jitter: %.2f ms", jitter));     //  Display jitter
+                else        //  0 Jitter comparisons aka [0,1] ping results, so display N/A
+                    jitterLabel.setText("Jitter: N/A");
             });
 
             //  Adds all visual UI components to panel
@@ -100,13 +252,6 @@ public class LatencyAnalyzerWindow
             //      ----------    Live Results Section    ----------
             JPanel resultsPanel = new JPanel(new GridLayout(0, 1, 5, 5));       //  Construct new JPanel object
             resultsPanel.setBorder(BorderFactory.createTitledBorder("LIVE RESULTS"));       //  Gives results section visible header and border
-
-            //  Placeholder values (eg. -- ms) will be replaced by real ping data later after connecting backend to desktop APP
-            JLabel averageLatencyLabel = new JLabel("Average Latency: -- ms");
-            JLabel minLatencyLabel = new JLabel("Minimum Latency: -- ms ");
-            JLabel maxLatencyLabel = new JLabel("Maximum Latency: -- ms");
-            JLabel packetLossLabel = new JLabel("Packet Loss: -- %");
-            JLabel jitterLabel = new JLabel("Jitter: -- ms");
 
             //  Add all of the results to seperate panels
             resultsPanel.add(averageLatencyLabel);
@@ -125,4 +270,3 @@ public class LatencyAnalyzerWindow
         });
     }
 }
-

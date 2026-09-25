@@ -17,7 +17,7 @@ public class src
     {
         System.out.println("Hello, user! Welcome to the Java program.");
         Scanner input = new Scanner(System.in); // Create a scanner object to read input from the user
-
+       
         System.out.println();
 
         System.out.print("Please enter your name: ");
