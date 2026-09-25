@@ -41,8 +41,8 @@ public class LatencyAnalyzerWindow
             //  Dropdown: user chooses safe test targets (public DNS servers)
             String[] targets =                      
             {
-                "Cloudflare (1.1.1.1)",
-                "Google (8.8.8.8)"
+                "1.1.1.1",
+                "8.8.8.8"
             };
 
             JComboBox<String> targetDropBox = new JComboBox<>(targets);     //  Creates a dropdown menu for users to choose test target
@@ -54,14 +54,14 @@ public class LatencyAnalyzerWindow
             JLabel testCountLabel = new JLabel("Number of tests:");
             JTextField testCountField = new JTextField("5", 5);     //  Text field begins with 5 as suggested # of tests the user should run
 
-            targetPanel.add(testCountLabel);
-            targetPanel.add(testCountField);
+            testCountPanel.add(testCountLabel);
+            testCountPanel.add(testCountField);
             
             JPanel delayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JLabel delayLabel = new JLabel("Delay between tests (seconds): ");
 
             JTextField delayField = new JTextField("1", 5);     //  Text field begins with 1 as the suggestedd text delay
-
+            
             delayPanel.add(delayLabel);
             delayPanel.add(delayField);
             
@@ -82,14 +82,13 @@ public class LatencyAnalyzerWindow
             startButton.addActionListener(event -> 
             {
                 String SelectedTarget = (String) targetDropBox.getSelectedItem();       //  Reads item selected from dropdown menu
-                //  Reads values currently entered into text fields:
-                String numberOftests = testCountField.getText();
-                String delaySeconds = delayField.getText();
-
-                //  Displays what the app plans to test:
-                statusLabel.setText(
-                    "Status: Preparing " + numberOftests + " test(s) to " + SelectedTarget + " every " + delaySeconds + " second(s)" 
-                );
+                
+                PingResult result = src.ping(SelectedTarget);       //  Calls ping method from src class (src.java) -- acts as bridge to actually connect ping function with users' selected target
+                if(result.success)
+                    statusLabel.setText(String.format("Ping successful: %.2f ms", result.latency));
+                else
+                    statusLabel.setText("Ping failed.");
+                
             });
 
             //  Adds all visual UI components to panel
@@ -126,3 +125,4 @@ public class LatencyAnalyzerWindow
         });
     }
 }
+

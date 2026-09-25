@@ -422,7 +422,7 @@ public class src
     }
 
     // ------- DISPLAY ALL PING RESULTS ------- 
-    private static void displayResults(ArrayList<PingResult> results, int numberOfTests)
+    public static void displayResults(ArrayList<PingResult> results, int numberOfTests)
     {
         int i = 0;
         
@@ -455,7 +455,7 @@ public class src
     //  Runs a real ping, determines success, extracts latency,
     //  and returns results in a PingResult object
 
-    private static PingResult ping(String target) //  Run a real ping and return the result
+    public static PingResult ping(String target) //  Run a real ping and return the result
     {
         ProcessBuilder processBuilder = new ProcessBuilder(
             "ping",
