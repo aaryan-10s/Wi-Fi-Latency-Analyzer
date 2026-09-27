@@ -523,9 +523,7 @@ public class src
         {
             e.printStackTrace(); // Print the stack trace if an exception occurs
             return new PingResult(target, 0, false, "placeholder"); // Return a PingResult object with the actual success state
-
         }
-    
     }
 }
 
