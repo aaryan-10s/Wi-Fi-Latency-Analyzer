@@ -4,21 +4,46 @@
     Goal: New Java file to create the actual desktop application and GUI Interface for Wi-Fi Latency Analyzer
  */
 
-import java.awt.Color;
+import java.awt.Color;      //  Gives access to color tools for customizing the GUI
 import java.awt.Component;     //  Controls how components are arranged
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;     //  Utilize array List tools
+import java.awt.Dimension;      //  Adjusting window dimensions (size), W X H (width and height)
+import java.awt.FlowLayout;     //  Layout for labels and text
+import java.awt.Font;       //  Font for customizing text
+import java.awt.GridLayout;     //  Utilize array List tools    
 import java.util.ArrayList;       //  Gives access to Windows Swing components
-import javax.swing.*;        //  Gives access to color tools for customizing the GUI
+import javax.swing.*;       //  Java SWING - set of GUI tools in java to create desktop APPS
+import com.formdev.flatlaf.FlatLightLaf;        //  FlatLaf - swing public API to modernize my buttons/logos in java swing application
 
 public class LatencyAnalyzerWindow
 {
+    
+    //  ---------- COLORS ----------
+    private static final Color BACKGROUND = new Color(245, 247, 250);
+    private static final Color CARD = Color.WHITE;
+    private static final Color BORDER = new Color(220, 225, 232);
+    private static final Color PRIMARY = new Color(37, 99, 235);
+    private static final Color TEXT = new Color(31, 45, 55);
+    private static final Color MUTED = new Color(107, 114, 128);
+    private static final Color SUCCESS = new Color(22, 163, 74);
+    private static final Color WARNING = new Color(217, 119, 6);
+    private static final Color DANGER = new Color(220, 38, 38);
+    
     public static void main(String[] args) 
     {
+        try
+        {
+            FlatLightLaf.setup();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Could not look FlatLaf. Loading default java swing...");
+        }
+
         //  Runs the interface safely on java's user interface thread
         SwingUtilities.invokeLater(() -> 
         {
+            
+            
             JFrame window = new JFrame("Wi-Fi Latency Analyzer");       //  Creates the main app Window and assigns a title
 
             //  Construct color objects to use for customizing the GUI
@@ -66,7 +91,7 @@ public class LatencyAnalyzerWindow
             {
                 "Cloudflare (1.1.1.1)",
                 "Google (8.8.8.8)",
-                "Quad9 9.9.9.9",
+                "Quad9 (9.9.9.9)",
                 "OpenDNS (208.67.222.222)",
                 "AdGuard (94.140.14.14)"
             };
@@ -144,8 +169,8 @@ public class LatencyAnalyzerWindow
             //  Runs everytime user clicks button 'Start Test' (IMPORTANT as it connects src.java functionality with the UI)
             startButton.addActionListener(event -> 
             {
-                String SelectedTarget = (String) targetDropBox.getSelectedItem();       //  Reads item selected from dropdown menu
-                String targetIP = SelectedTarget.substring(SelectedTarget.indexOf("(") + 1, SelectedTarget.indexOf(")"));       //  use subString() method to only get IP address of public dns servers from dropdown list
+                String selectedTarget = (String) targetDropBox.getSelectedItem();       //  Reads item selected from dropdown menu
+                String targetIP = selectedTarget.substring(selectedTarget.indexOf("(") + 1, selectedTarget.indexOf(")"));       //  use subString() method to only get IP address of public dns servers from dropdown list
 
                 //  Read # of tests and delay from text fields
                 String testCountText = testCountField.getText();
@@ -339,7 +364,8 @@ public class LatencyAnalyzerWindow
             
             window.add(panel);      //  Adds main panel/completed interface to window
 
-            window.setSize(650, 500);       // Sets window starting size
+            window.setSize(750, 600);       // Sets window starting size
+            window.setMinimumSize(new Dimension(650, 500));
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);      //  Makes the program fully close when user exits window
             window.setLocationRelativeTo(null);     //  Opens program in center of the screen
             window.setVisible(true);        //  Make completed window visible
@@ -348,3 +374,4 @@ public class LatencyAnalyzerWindow
 }
 //  End of LatencyAnalyzerWindow file
 //  End of GUI/Desktop APP code
+

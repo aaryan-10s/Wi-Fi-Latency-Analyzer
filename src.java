@@ -1,7 +1,7 @@
 /*
     Aaryan Soni
     Wifi-Latency Analyzer Project
-    Inspired by Gaming and unstable connections!
+    Goal: Create backend code (features like user name may not be in the final GUI until version 2)
  */
 
 import java.io.BufferedReader;
