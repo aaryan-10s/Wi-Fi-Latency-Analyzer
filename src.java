@@ -524,8 +524,10 @@ public class src
             e.printStackTrace(); // Print the stack trace if an exception occurs
             return new PingResult(target, 0, false, "placeholder"); // Return a PingResult object with the actual success state
         }
-    }
-}
+        
+    }       //  end of main method
+
+}       //  end of public class
 
 //  Ping Result Class - Stores the result of a network test
 class PingResult 
@@ -548,7 +550,7 @@ class PingResult
         this.success = success;
         this.timestamp = timestamp;
     }
-}
-//  End of PingResult class
+}       //  End of PingResult class
+
 //  End of source file
 //  Wi-Fi Latency Analyzer

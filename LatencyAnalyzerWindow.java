@@ -12,11 +12,11 @@ import java.awt.Font;       //  Font for customizing text
 import java.awt.GridLayout;     //  Utilize array List tools    
 import java.util.ArrayList;       //  Gives access to Windows Swing components
 import javax.swing.*;       //  Java SWING - set of GUI tools in java to create desktop APPS
-import com.formdev.flatlaf.FlatLightLaf;        //  FlatLaf - swing public API to modernize my buttons/logos in java swing application
-import javax.lang.model.util.ElementScanner14;
+import com.formdev.flatlaf.FlatLightLaf;        //  FlatLaf - swing public API to modernize my buttons/logos in java swing application (light mode)
 
 public class LatencyAnalyzerWindow
 {
+    private static boolean darkMode = false;        //  program is light mode by default
     
     //  ---------- COLORS ---------- (private static final means more efficient and consistency (constant))
     private static final Color BACKGROUND = new Color(245, 247, 250);       //  light gray-blue
@@ -24,7 +24,6 @@ public class LatencyAnalyzerWindow
     private static final Color BORDER = new Color(220, 225, 232);       //  soft, light-gray blue
 
     private static final Color PRIMARY = new Color (37, 99, 235);       //  modern royal blue
-    private static final Color PRIMARY_DARK = new Color(29, 78, 216);       //  deeper, darker blue
 
     private static final Color TEXT = new Color(31, 41, 55);        //  dark charcoal/gray
     private static final Color MUTED = new Color (107, 114, 128);     //  neutral gray
@@ -168,24 +167,40 @@ public class LatencyAnalyzerWindow
             //      ----------    BUTTON AND STATUS SECTION    ---------- 
 
             //  ------------  TEST BUTTON  ------------
-            JButton startButton = new JButton("▶ Start Test");        //  Button to run real Ping Tests
+            JButton startButton = new JButton("Start Test");        //  Button to run real Ping Tests
             startButton.setFont(new Font("Segoe UI", Font.BOLD, 15));      //  Change button text font to support Button icon
             startButton.setForeground(Color.WHITE);     //  Change text to white
             startButton.setBackground(PRIMARY);     //  Set background color of button panel to roya blue
             startButton.setFocusPainted(false);
-            startButton.setBorderPainted(false);
+            //  startButton.setBorderPainted(false);
             startButton.setPreferredSize(new Dimension(180, 42));
             startButton.setMaximumSize(new Dimension(180, 42));
             startButton.setAlignmentX(Component.LEFT_ALIGNMENT);      //  Button alignment on the panel   
             
-            mainPanel.add(startButton);
             mainPanel.add(Box.createVerticalStrut(10));
+
+            mainPanel.add(startButton);
+
+            //  ------------  RESET BUTTON  ------------
+            JButton resetButton = new JButton("RESET");
+            resetButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
+            resetButton.setForeground(TEXT);
+            resetButton.setBackground(Color.WHITE);
+            resetButton.setFocusPainted(false);
+            resetButton.setPreferredSize(new Dimension(180, 42));
+            resetButton.setMaximumSize(new Dimension(180, 42));
+            resetButton.setAlignmentX(Component.LEFT_ALIGNMENT);      //  rest button alignment on the panel 
+
+            //  ------------  BUTTON PANEL  ------------
+            
+            mainPanel.add(resetButton);     //  add to main panel
 
             //  ------------  STATUS  ------------
             JLabel statusLabel = new JLabel("Ready to test");       //  Displays status
             statusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             statusLabel.setForeground(MUTED);       //  Set text color to gray
             statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
 
             mainPanel.add(statusLabel);
             mainPanel.add(Box.createVerticalStrut(20));
@@ -312,11 +327,9 @@ public class LatencyAnalyzerWindow
                 
                 //  disable button while testing
                 startButton.setEnabled(false);
-                startButton.setText("Testing...");
                 statusLabel.setText("Running test 1 of " + numberOfTests + "...");
 
-                //  Run requested # of tests
-                for (int i = 0; i < numberOfTests; i++)
+                for (int i = 0; i < numberOfTests; i++)     //  Run requested # of tests
                 {
                     statusLabel.setText("Running test " + (i + 1) + " of " + numberOfTests + "...");        //  show current test #
                     
@@ -337,7 +350,7 @@ public class LatencyAnalyzerWindow
                             statusLabel.setText("Test Interrupted.");
                             
                             startButton.setEnabled(true);
-                            startButton.setText("▶ Start Test");
+                            startButton.setText("Start Test");
 
                             return;
                         }
@@ -499,7 +512,28 @@ public class LatencyAnalyzerWindow
 
             //  reenable button after test is complete
             startButton.setEnabled(true);
-            startButton.setText("▶ Start Test");
+            startButton.setText("Start Test");
+            });
+
+            //  ----------  RESET BUTTON  ----------  
+            resetButton.addActionListener(event -> 
+            {
+                //  reset metrics
+                averageValue.setText("--");
+                minValue.setText("--");
+                maxValue.setText("--");
+                jitterValue.setText("--");
+                packetLossValue.setText("--");
+                
+                //  reset metric descriptions
+                packetLossDetail.setText("Failed tests / total tests");
+
+                //  reset connection status
+                healthValue.setText("READY");
+                healthValue.setForeground(PRIMARY);
+                healthDescription.setText("Run a test to evaluate connection stability");
+
+                statusLabel.setText("Ready to test");
             });
 
             //  =======   ADD VISUAL COMPONENTS (UI) TO MAIN WINDOW    =======   
@@ -509,8 +543,6 @@ public class LatencyAnalyzerWindow
         });     //  End of swingutil invoke later
 
     }       //  End of main method
-
-
 
     //  =======   METRIC CARD METHOD    =======
     private static JPanel createMetricCard(String title, JLabel valueLabel, JLabel detailLabel)
@@ -548,4 +580,3 @@ public class LatencyAnalyzerWindow
 }       //  End of LatencyAnalyzerWindow class
 
 //  End of GUI/Desktop APP code
-
