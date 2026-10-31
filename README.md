@@ -9,17 +9,27 @@ A Java Windows desktop application that measures network latency, packet loss, a
 ![Wi-Fi Latency Analyzer Demo](Assets/latency-demo.gif)
 
 ## Try It
-A downloadable version of this application will be provided when the project is shipped.
+https://github.com/aaryan-10s/Wi-Fi-Latency-Analyzer/releases/download/v1.0.0/WiFi-Latency-Analyzer-v1.0.0-Windows.zip.zip
 
 Wi-Fi Latency Analyzer is currently designed for Windows computers with an internet connection.
 
 ## Quick Start
 
-### Requirements
+### System Requirements
 
-- Windows Computer
-- Java 25 (LTS)
+- Windows 10 or Windows 11
+- Active network connection
+- No separate Java installation required
 - Internet Connection
+
+### Installation
+
+1. Download the latest Windows release.
+2. Extract the ZIP file.
+3. Open the extracted folder.
+4. Launch `WiFi Latency Analyzer.exe`.
+Note: Some networks or firewalls may block ping requests.
+**The application needs permission to execute normally on the computer.
 
 ### Running the Application
 
