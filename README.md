@@ -5,7 +5,7 @@ A Java Windows desktop application that measures network latency, packet loss, a
 ![Wi-Fi Latency Analyzer Demo](assets/WifiLatencyAnalyzerGIF.gif)
 
 ## Test Results/Application DEMO
-![Wi-Fi Latency Analyzer Dashboard](Assets/WifiResults.png)
+![Wi-Fi Latency Analyzer Dashboard](Assets/LatencyResults.png)
 ![Wi-Fi Latency Analyzer Demo](Assets/latency-demo.gif)
 
 ## Try It
